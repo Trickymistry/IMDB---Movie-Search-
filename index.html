@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+Movie Information
+</title>
+
+
+
+<style>
+
+#search-bar{
+    display: inline-flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 50px 0;
+    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFTfs18WE0N3xiCYNPGzAry6lOx3BTafUUgg&usqp=CAU");}
+    
+#movie-name{
+    padding: 10px;
+    font-size: 1.4rem;  
+    width: 30%;
+    min-width: 200px;
+    box-shadow: 0px 0px 30px 2px #4d4dff;
+}
+ #search{
+    padding: 10px;
+    font-size: 1.4rem;  
+    width: 30%;
+    min-width: 200px;
+    cursor: pointer;
+    box-shadow: 0px 0px 30px 2px #4d4dff;
+}
+
+
+
+
+#output{
+   display: flex;
+   flex-direction:raw;
+   width: 100%;
+}
+
+/*append this class for "image-div" and "movie-content-div" */
+.output-content{
+
+margin:5px;
+padding:5px;
+width:50%;
+
+}
+
+#movie-poster{
+ padding:10px;
+ margin: 10px;
+ width:70%;
+  }
+ 
+ .favourite1{
+	text-align:center;
+    margin:auto;
+    width: 90%;
+    background-color:#4d4dff;
+    color:white;
+    padding:10px;
+ 	margin: 10px;
+ }
+ .favourite2{
+	text-align:center;
+    margin:auto;
+    width: 90%;
+    box-shadow: 0px 0px 30px 2px #4d4dff;
+    padding:10px;
+ }
+ 
+ #scr{
+ margin-left:0.4rem;}
+</style>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+</head>
+<body>
+
+
+
+<div id="search-bar">
+<!--Take the input for movie-name -->
+<input id="movie-name" type="text" autocomplete="on">
+<!-- Create the search button -->
+<button id="search"  onclick="searchFunction()"> Search</button>
+</div>
+<!--Create the div for output result -->
+<div id="output" >
+<!-- Specify the image-div for movie's poster -->
+<div id ="image-div">
+<!--div id ="image-div" class="output-content"-->
+<img id="movie-poster"  >
+
+</div>
+<!-- Create the movie-content-div for movie's details -->
+<div id="movie-content-div" class="output-content">
+
+</div>
+
+</div>
+<div id="fav-btn" onclick="favourite()"> </div>
+<hr>
+<!-- Create the div for favourite-movie-list -->
+<div id="favourite-movie-list" class="favourite2">
+<h1> Your favourite movie list items. </h1>
+<ul id="myList">
+
+</ul>
+</div>
+<script>
+//AJAX request function.
+function ajaxRequest(url){
+  
+  var movieRequest=new XMLHttpRequest();
+  
+  movieRequest.onload=function(){
+  var responseJSON=JSON.parse(movieRequest.response);
+  var imgurl=responseJSON.Poster;
+  //Set the attribute for output div.
+  var outputContainer= document.getElementById("output");
+  outputContainer.setAttribute("height", "400px");
+   
+  //Set the attributes and class for image tag.
+  document.getElementById("movie-poster").setAttribute("src", imgurl);
+  document.getElementById("movie-poster").setAttribute("alt", "No Movie exist with this name...");
+   document.getElementById("movie-poster").setAttribute("class", "output-content");
+   
+   //set the attribute for "movie-content-div" to show the information.
+   var contdiv=document.getElementById("movie-content-div");
+      contdiv.innerHTML="<p>" + "<b>Title: </b>" + responseJSON.Title + "</p> <p>" + "<b>Released Date: </b>" + responseJSON.Released + "</p> <p>" + "<b>Movie type: </b>" + responseJSON.Genre + "</p> <p>" + "<b>Director: </b>" + responseJSON.Director + "</p> <p>" + "<b>Actors: </b>" + responseJSON.Actors + "</p> <p>" + "<b>Language & Country: </b>" + responseJSON.Language + "&" + responseJSON.Country + "</p> <p>" + "<b>Awards: </b>" + responseJSON.Awards + "</p> <p>" + "<b>Movie Disclamer: </b>" + responseJSON.Plot + "</p>";
+ 
+ var movieName=responseJSON.Title;
+ 
+ 
+//Adding favourite button.
+var createBTN= document.createElement("BUTTON");
+var btnText = document.createTextNode("Add to favourite");
+createBTN.classList.add("favourite1");
+createBTN.id="fav";
+createBTN.appendChild(btnText);
+contdiv.appendChild(createBTN);   
+ 
+
+ //button Event listener
+  createBTN.addEventListener("click", myFunction);
+ function myFunction() {
+ var list = document.createElement("li");
+var listText = document.createTextNode(responseJSON.Title);
+list.appendChild(listText);
+  list.classList.add("favourite2");
+ // list.id="listitem";
+   
+         
+document.getElementById("myList").appendChild(list);
+
+ //Creating remove button
+var rbtn= document.createElement("BUTTON");
+var rtext = document.createTextNode("Remove");
+rbtn.id="remove";
+rbtn.appendChild(rtext);
+list.appendChild(rbtn);
+ //creating favourite button 
+var favsearch= document.createElement("BUTTON");
+var stext = document.createTextNode("Search");
+rbtn.id="fsearch";
+favsearch.appendChild(stext);
+list.appendChild(favsearch);
+
+ //favourite button event listener 
+  favsearch.addEventListener('click', () => {
+  var furl=  urlfunction(movieName);
+  var temp= ajaxRequest(url); });
+  
+//Remove button event listener
+rbtn.addEventListener('click', () => {
+  list.remove();});
+
+}
+  }//onload function closer.
+  
+    movieRequest.open('get', url, true);
+    movieRequest.send();
+   }//ajaxRequest fuction closer.
+    
+
+//function to create url by using input
+function urlfunction(input){
+var keyword=input.replace(/\s/g, "+");
+  //store the API in var "url".
+  var url = "https://www.omdbapi.com/?t=" + keyword + "&apikey=1d63a59c";
+	return url;
+}
+//Search function
+function searchFunction(){
+var input=document.getElementById("movie-name").value;
+var apiurl=urlfunction(input);
+var temp=ajaxRequest(apiurl);
+}
+  
+
+</script>
+</body>
+</html>
